@@ -120,11 +120,11 @@ You can manually create the virtualenv using::
 This will install a virtualenv with pytest and the latest stable version of
 Django. The virtualenv can then be activated with::
 
-    $ source bin/activate
+    $ source build/venv/bin/activate
 
 Then, simply invoke pytest to run the test suite::
 
-    $ pytest --ds=tests.settings_sqlite
+    $ pytest --ds=pytest_django_test.settings_sqlite
 
 
 tox can be used to run the test suite under different configurations by
