@@ -15,8 +15,9 @@ Automatic looking for of Django projects
 ----------------------------------------
 
 By default, pytest-django tries to find Django projects by automatically
-looking for the project's ``manage.py`` file and adding its directory to the
-Python path.
+looking for the project's ``manage.py`` file in the current working directory,
+its immediate subdirectory and its parents. If the project directory is found,
+pytest-django adds it to the Python path without any configuration.
 
 Looking for the ``manage.py`` file uses the same algorithm as pytest uses to
 find ``pytest.ini``, ``tox.ini`` and ``setup.cfg``: Each test root directories
