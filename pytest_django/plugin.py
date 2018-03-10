@@ -11,7 +11,8 @@ import os
 import sys
 import types
 
-import py
+import pathlib
+import itertools
 import pytest
 
 from .django_compat import is_django_unittest  # noqa
@@ -88,13 +89,6 @@ def pytest_addoption(parser):
                   type='bool', default=False)
 
 
-def _exists(path, ignore=EnvironmentError):
-    try:
-        return path.check()
-    except ignore:
-        return False
-
-
 PROJECT_FOUND = ('pytest-django found a Django project in %s '
                  '(it contains manage.py) and added it to the Python path.\n'
                  'If this is wrong, add "django_find_project = false" to '
@@ -121,22 +115,27 @@ def _handle_import_error(extra_message):
 
 
 def _add_django_project_to_path(args):
-    args = [x for x in args if not str(x).startswith("-")]
+    def is_django_project(path):
+        return (path / 'manage.py').exists()
 
-    if not args:
-        args = [py.path.local()]
+    cwd = pathlib.Path.cwd()
 
-    for arg in args:
-        arg = py.path.local(arg)
+    candidate_dirs = itertools.chain(
+        [cwd],
+        sorted(path for path in cwd.iterdir()
+               if path.is_dir()),
+        cwd.resolve().parents,
+    )
+    project_dir = next(
+        (dir for dir in candidate_dirs if is_django_project(dir)),
+        None
+    )
 
-        for base in arg.parts(reverse=True):
-            manage_py_try = base.join('manage.py')
-
-            if _exists(manage_py_try):
-                sys.path.insert(0, str(base))
-                return PROJECT_FOUND % base
-
-    return PROJECT_NOT_FOUND
+    if project_dir:
+        sys.path.insert(0, str(project_dir))
+        return PROJECT_FOUND % project_dir
+    else:
+        return PROJECT_NOT_FOUND
 
 
 def _setup_django():
