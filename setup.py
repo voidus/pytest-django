@@ -32,7 +32,8 @@ setup(
     setup_requires=['setuptools_scm>=1.11.1'],
     install_requires=[
         'pytest>=2.9',
-        'pathlib;python_version<"3.4"'
+        'pathlib;python_version<"3.4"',
+        'six',
     ],
     classifiers=['Development Status :: 5 - Production/Stable',
                  'Framework :: Django',

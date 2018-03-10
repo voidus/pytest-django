@@ -11,7 +11,6 @@ import os
 import sys
 import types
 
-import py
 import pathlib
 import itertools
 import pytest
